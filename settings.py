@@ -1,4 +1,5 @@
 import logging
+import sys
 
 
 def _get_logger(log: bool, handler: str) -> logging.Logger:
@@ -22,3 +23,10 @@ def _get_logger(log: bool, handler: str) -> logging.Logger:
         file_log.setFormatter(formatter)
         settings_logger.addHandler(file_log)
     return settings_logger
+
+
+def _cls_mode_run(logger: logging.Logger, cls_mode: bool) -> bool:
+    if cls_mode:
+        logger.info('Shutting down the app!')
+        sys.exit()
+    return False
