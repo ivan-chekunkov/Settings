@@ -1,3 +1,4 @@
+import json
 import logging
 import sys
 
@@ -30,3 +31,28 @@ def _cls_mode_run(logger: logging.Logger, cls_mode: bool) -> bool:
         logger.info('Shutting down the app!')
         sys.exit()
     return False
+
+
+def _load_json(
+    file_name: str,
+    logger: logging.Logger,
+    cls_mode: bool,
+    encoding: str
+) -> dict | None:
+    logger.info('Downloading the settings file {}!'.format(file_name))
+    try:
+        with open(file=file_name, mode='r', encoding=encoding) as file:
+            try:
+                result = json.load(file)
+                logger.info('File {} loaded - OK!'.format(file_name))
+            except json.JSONDecodeError as error:
+                logger.error('Incorrect settings file!')
+                logger.error(error)
+                if not _cls_mode_run(logger=logger, cls_mode=cls_mode):
+                    return None
+    except (FileNotFoundError, LookupError) as error:
+        logger.error('Error opening the {} settings file!'.format(file_name))
+        logger.error(error)
+        if not _cls_mode_run(logger=logger, cls_mode=cls_mode):
+            return None
+    return result
