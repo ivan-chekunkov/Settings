@@ -56,3 +56,33 @@ def _load_json(
         if not _cls_mode_run(logger=logger, cls_mode=cls_mode):
             return None
     return result
+
+
+def load(
+    file_name: str = 'settings.json',
+    cls_mode: bool = True,
+    log: bool = True,
+    handler: str = 'fc',
+    encoding: str = 'UTF-8',
+    need_to_check: bool = False,
+    cheking_settings: dict | list | None = None
+) -> dict | None:
+    if cheking_settings is None:
+        cheking_settings = {}
+    logger = _get_logger(log=log, handler=handler)
+    extension = file_name.split('.')[-1]
+    if extension == 'json':
+        result = _load_json(file_name, logger, cls_mode, encoding)
+    else:
+        logger.error(
+            'I can not upload files with the extension: {}'.format(extension)
+        )
+        return None
+    if need_to_check and cheking_settings:
+        if not result:
+            logger.info(
+                'You can not check the settings because they are empty!'
+            )
+            return result
+        _valid_settings(cheking_settings, logger, result)
+    return result
