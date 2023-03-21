@@ -58,6 +58,35 @@ def _load_json(
     return result
 
 
+def _valid_settings(
+    cheking_settings: dict | list,
+    logger: logging.Logger,
+    settings: dict
+):
+    try:
+        if isinstance(cheking_settings, dict):
+            for name_set, type_set in cheking_settings.items():
+                data = settings.get(name_set, None)
+                if data:
+                    if isinstance(data, type_set):
+                        logger.info('Correct type: {} - OK'.format(name_set))
+                    else:
+                        logger.info(
+                            'Not correct type: {} - BAD'.format(name_set)
+                        )
+                else:
+                    logger.info('Not found: {} - BAD'.format(name_set))
+        if isinstance(cheking_settings, list):
+            for name_set in cheking_settings:
+                data = settings.get(name_set, None)
+                if data:
+                    logger.info('Correct type: {} - OK'.format(name_set))
+                else:
+                    logger.info('Not found: {} - BAD'.format(name_set))
+    except Exception as error:
+        logger.error(error)
+
+
 def load(
     file_name: str = 'settings.json',
     cls_mode: bool = True,
